@@ -1,0 +1,2156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#5B21B6">
+<title>Caja de Ahorro</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+/* =========================================================
+   CAJA DE AHORRO — Hoja de estilos
+   Mobile-First. Optimizado para Samsung Galaxy S24 (Chrome).
+   Paleta: Lila / Morado + Blanco / Beige.
+   ========================================================= */
+
+:root{
+  /* Morados y lilas */
+  --morado-profundo:#3B1E6E;
+  --morado:#5B21B6;
+  --morado-claro:#7C4DDB;
+  --lila:#A78BFA;
+  --lila-suave:#EDE6FB;
+  --lila-borde:#DDD1F5;
+
+  /* Blancos y beiges */
+  --beige:#F7F3EC;
+  --beige-hondo:#EFE8DC;
+  --blanco:#FFFFFF;
+
+  /* Texto */
+  --tinta:#241A38;
+  --tinta-media:#6B6280;
+  --tinta-suave:#948CA8;
+
+  /* Semáforo de Aportación Social */
+  --verde:#2FA36B;
+  --amarillo:#E2A32B;
+  --rojo:#D4453C;
+
+  /* Transacciones */
+  --color-credito:#6D28D9;   /* Solicitud de Crédito */
+  --color-retiro:#D97A2B;    /* Solicitud de Retiro  */
+
+  --radio:22px;
+  --radio-chico:16px;
+  --sombra:0 6px 20px rgba(59,30,110,.10);
+  --sombra-alta:0 -10px 40px rgba(36,26,56,.28);
+
+  --alto-barra:76px;
+}
+
+*{ margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+/* El atributo hidden siempre manda, sin importar que display declare la clase.
+   Evita que un panel se quede pegado en pantalla y atrape al usuario. */
+[hidden]{ display:none !important; }
+
+html{ font-size:18px; }           /* Base grande para alta legibilidad */
+
+body{
+  font-family:'Inter',system-ui,-apple-system,sans-serif;
+  background:var(--beige);
+  color:var(--tinta);
+  line-height:1.55;
+  min-height:100dvh;
+  overflow-x:hidden;
+  padding-top:calc(var(--alto-barra) + env(safe-area-inset-top));
+  -webkit-font-smoothing:antialiased;
+}
+
+/* ================= BARRA SUPERIOR ================= */
+.barra-superior{
+  position:fixed; top:0; left:0; right:0; z-index:60;
+  height:calc(var(--alto-barra) + env(safe-area-inset-top));
+  padding:env(safe-area-inset-top) 18px 0 12px;
+  display:flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg,var(--morado) 0%,var(--morado-profundo) 100%);
+  box-shadow:0 4px 18px rgba(59,30,110,.30);
+}
+
+.boton-hamburguesa{
+  width:60px; height:60px; flex:0 0 60px;
+  display:flex; flex-direction:column; justify-content:center; align-items:center; gap:6px;
+  background:rgba(255,255,255,.14);
+  border:none; border-radius:18px; cursor:pointer;
+}
+.boton-hamburguesa span{
+  width:28px; height:3px; border-radius:3px; background:var(--blanco);
+  transition:transform .28s ease, opacity .2s ease;
+}
+.boton-hamburguesa.abierto span:nth-child(1){ transform:translateY(9px) rotate(45deg); }
+.boton-hamburguesa.abierto span:nth-child(2){ opacity:0; }
+.boton-hamburguesa.abierto span:nth-child(3){ transform:translateY(-9px) rotate(-45deg); }
+
+.titulo-barra{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.5rem; font-weight:700; color:var(--blanco); letter-spacing:.2px;
+}
+
+/* ================= MENÚ LATERAL ================= */
+.capa-oscura{
+  position:fixed; inset:0; z-index:70;
+  background:rgba(36,26,56,.55); backdrop-filter:blur(2px);
+  animation:aparecer .22s ease;
+}
+@keyframes aparecer{ from{opacity:0} to{opacity:1} }
+
+.menu-lateral{
+  position:fixed; top:0; left:0; z-index:80;
+  width:min(86vw,340px); height:100dvh;
+  padding:calc(28px + env(safe-area-inset-top)) 16px 40px;
+  background:var(--blanco);
+  overflow-y:auto;
+  transform:translateX(-102%);
+  transition:transform .3s cubic-bezier(.4,0,.2,1);
+  box-shadow:8px 0 40px rgba(36,26,56,.25);
+}
+.menu-lateral.abierto{ transform:translateX(0); }
+
+.menu-encabezado{
+  padding:6px 10px 22px; margin-bottom:10px;
+  border-bottom:2px solid var(--lila-suave);
+}
+.menu-titulo{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.55rem; font-weight:700; color:var(--morado-profundo); line-height:1.2;
+}
+.menu-subtitulo{ font-size:.85rem; color:var(--tinta-suave); }
+
+.menu-etiqueta{
+  margin:20px 12px 8px;
+  font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--lila);
+}
+
+.menu-opcion{
+  display:block; width:100%;
+  min-height:64px; padding:16px 18px; margin-bottom:8px;
+  font-family:inherit; font-size:1.05rem; font-weight:600; text-align:left;
+  color:var(--tinta);
+  background:var(--beige); border:2px solid transparent; border-radius:var(--radio-chico);
+  cursor:pointer;
+  transition:background .18s ease, color .18s ease, border-color .18s ease;
+}
+.menu-opcion:active{ background:var(--lila-suave); }
+.menu-opcion.seleccionado{
+  background:var(--lila-suave);
+  border-color:var(--lila);
+  color:var(--morado-profundo);
+}
+
+/* ================= CONTENIDO ================= */
+#contenido{ padding:20px 16px calc(48px + env(safe-area-inset-bottom)); max-width:640px; margin:0 auto; }
+
+.pantalla{ display:none; }
+.pantalla.activa{ display:block; animation:subir .3s ease; }
+@keyframes subir{ from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none} }
+
+/* ================= TARJETAS ================= */
+.tarjeta{
+  background:var(--blanco);
+  border:1px solid var(--lila-borde);
+  border-radius:var(--radio);
+  padding:24px 20px;
+  margin-bottom:18px;
+  box-shadow:var(--sombra);
+}
+
+.tarjeta-principal{
+  background:linear-gradient(150deg,var(--morado) 0%,var(--morado-profundo) 100%);
+  border:none; padding:30px 22px;
+}
+.tarjeta-principal .etiqueta-tarjeta{ color:var(--lila); }
+.tarjeta-principal .nota-tarjeta{ color:rgba(255,255,255,.62); }
+
+.etiqueta-tarjeta{
+  font-size:.78rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--tinta-suave); margin-bottom:10px;
+}
+
+.monto-gigante{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:2.85rem; font-weight:700; line-height:1.1; color:var(--blanco);
+  letter-spacing:-.5px; word-break:break-word;
+}
+.monto-mediano{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.6rem; font-weight:700; color:var(--morado-profundo); line-height:1.2;
+  word-break:break-word;
+}
+.nota-tarjeta{ margin-top:8px; font-size:.85rem; color:var(--tinta-media); }
+
+.rejilla-doble{ display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:18px; }
+.rejilla-doble .tarjeta{ margin-bottom:0; padding:20px 16px; }
+.tarjeta-secundaria{ background:var(--blanco); }
+
+.titulo-seccion{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.3rem; font-weight:700; color:var(--morado-profundo); margin-bottom:4px;
+}
+
+.caja-grafica{ position:relative; height:250px; margin-top:16px; }
+
+/* ================= WIDGET DE SOLICITUDES ================= */
+.bloque-widget{
+  margin-top:28px;
+  padding:24px 0 22px;
+  background:var(--beige-hondo);
+  border:2px dashed var(--lila-borde);
+  border-radius:var(--radio);
+}
+.widget-encabezado{
+  display:flex; align-items:baseline; justify-content:space-between; gap:10px;
+  padding:0 20px;
+}
+.widget-titulo{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.3rem; font-weight:700; color:var(--morado-profundo);
+}
+.widget-mes{
+  font-size:.78rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--morado); background:var(--lila-suave);
+  padding:6px 12px; border-radius:999px; white-space:nowrap;
+}
+.widget-nota{ padding:6px 20px 0; font-size:.85rem; color:var(--tinta-media); }
+
+/* Tira horizontal deslizable */
+.tira-horizontal{
+  display:flex; gap:12px;
+  margin-top:16px; padding:4px 20px 14px;
+  overflow-x:auto;
+  scroll-snap-type:x mandatory;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.tira-horizontal::-webkit-scrollbar{ display:none; }
+
+.dia-tira{
+  flex:0 0 88px;
+  scroll-snap-align:start;
+  min-height:132px;
+  padding:14px 8px 12px;
+  display:flex; flex-direction:column; align-items:center; gap:4px;
+  background:var(--blanco);
+  border:2px solid var(--lila-borde);
+  border-radius:var(--radio-chico);
+  box-shadow:var(--sombra);
+  cursor:pointer;
+}
+.dia-tira.con-movimientos{ border-color:var(--lila); background:var(--lila-suave); }
+.dia-tira .nombre-dia{
+  font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--tinta-suave);
+}
+.dia-tira .numero-dia{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.9rem; font-weight:700; color:var(--morado-profundo); line-height:1.1;
+}
+.burbujas-tira{ display:flex; gap:5px; margin-top:auto; min-height:26px; align-items:center; }
+
+.burbuja-conteo{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:26px; height:26px; padding:0 6px;
+  font-size:.78rem; font-weight:700; color:var(--blanco);
+  border-radius:999px;
+}
+.burbuja-conteo.credito{ background:var(--color-credito); }
+.burbuja-conteo.retiro{ background:var(--color-retiro); }
+.sin-movimientos{ font-size:.72rem; color:var(--tinta-suave); }
+
+.widget-leyenda{
+  display:flex; flex-wrap:wrap; gap:14px;
+  padding:4px 20px 0;
+}
+
+/* ================= LEYENDAS ================= */
+.punto-leyenda{
+  display:inline-flex; align-items:center; gap:8px;
+  font-size:.82rem; font-weight:600; color:var(--tinta-media);
+}
+.burbuja{ width:14px; height:14px; border-radius:50%; display:inline-block; }
+.burbuja-credito{ background:var(--color-credito); }
+.burbuja-retiro{ background:var(--color-retiro); }
+
+.semaforo{
+  width:16px; height:16px; border-radius:50%; display:inline-block; flex:0 0 16px;
+  box-shadow:0 0 0 3px rgba(0,0,0,.05);
+}
+.semaforo.verde{ background:var(--verde); }
+.semaforo.amarillo{ background:var(--amarillo); }
+.semaforo.rojo{ background:var(--rojo); }
+
+.tarjeta-leyenda{ padding:20px; }
+.lista-leyenda{ display:flex; flex-direction:column; gap:10px; margin-top:12px; }
+.leyenda-calendario{ flex-direction:row; flex-wrap:wrap; gap:16px; margin-top:18px; }
+
+/* ================= BOTONES ================= */
+.boton-grande{
+  display:block; width:100%;
+  min-height:66px;                 /* Requisito: mínimo 60px */
+  padding:18px 22px; margin-bottom:12px;
+  font-family:inherit; font-size:1.12rem; font-weight:700; letter-spacing:.2px;
+  border:none; border-radius:var(--radio); cursor:pointer;
+  transition:transform .12s ease, box-shadow .2s ease, background .2s ease;
+}
+.boton-grande:active{ transform:scale(.975); }
+
+.boton-primario{
+  background:linear-gradient(135deg,var(--morado-claro),var(--morado));
+  color:var(--blanco);
+  box-shadow:0 8px 20px rgba(91,33,182,.32);
+}
+.boton-secundario{
+  background:var(--lila-suave);
+  color:var(--morado-profundo);
+  border:2px solid var(--lila-borde);
+}
+.boton-peligro{ background:var(--rojo); color:var(--blanco); }
+
+.boton-texto{
+  width:100%; min-height:60px; margin-bottom:14px;
+  font-family:inherit; font-size:1rem; font-weight:700;
+  color:var(--morado); background:transparent;
+  border:2px solid var(--lila-borde); border-radius:var(--radio);
+  cursor:pointer;
+}
+
+.boton-circulo{
+  width:60px; height:60px; flex:0 0 60px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2rem; line-height:1; font-weight:700;
+  color:var(--morado); background:var(--lila-suave);
+  border:none; border-radius:50%; cursor:pointer;
+}
+
+/* ================= FORMULARIOS ================= */
+.etiqueta-campo{
+  display:block; margin:20px 0 8px;
+  font-size:.92rem; font-weight:700; color:var(--tinta);
+}
+.campo{
+  display:block; width:100%;
+  min-height:64px; padding:16px 18px;
+  font-family:inherit; font-size:1.1rem; font-weight:500; color:var(--tinta);
+  background:var(--beige);
+  border:2px solid var(--lila-borde); border-radius:var(--radio-chico);
+  outline:none;
+  transition:border-color .18s ease, background .18s ease;
+  appearance:none; -webkit-appearance:none;
+}
+select.campo{
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='none' stroke='%235B21B6' stroke-width='2.5' stroke-linecap='round'><path d='M5 8l6 6 6-6'/></svg>");
+  background-repeat:no-repeat; background-position:right 18px center;
+  padding-right:52px;
+}
+.campo:focus{ border-color:var(--morado); background:var(--blanco); }
+
+.mensaje-error{
+  margin:16px 0 0; padding:14px 16px;
+  font-size:.92rem; font-weight:600; color:var(--rojo);
+  background:rgba(212,69,60,.08);
+  border-left:5px solid var(--rojo);
+  border-radius:12px;
+}
+.saldo-vivo{
+  margin-top:16px; padding:14px 16px;
+  font-size:1rem; font-weight:700; color:var(--morado-profundo);
+  background:var(--lila-suave); border-radius:12px;
+}
+
+/* Botón activo del formulario, separado del margen inferior */
+.tarjeta .boton-grande{ margin-top:24px; margin-bottom:0; }
+.tarjeta .boton-grande + .boton-grande{ margin-top:12px; }
+
+/* ================= ACORDEÓN DEL DIRECTORIO ================= */
+.grupo-acordeon{ margin-bottom:14px; }
+
+.cabecera-acordeon{
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+  width:100%; min-height:72px; padding:18px 20px;
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.22rem; font-weight:700; text-align:left; color:var(--morado-profundo);
+  background:var(--blanco);
+  border:2px solid var(--lila-borde); border-radius:var(--radio);
+  cursor:pointer;
+}
+.cabecera-acordeon.abierta{
+  background:var(--lila-suave); border-color:var(--lila);
+  border-bottom-left-radius:0; border-bottom-right-radius:0;
+}
+.grupo-derecha{ display:flex; align-items:center; gap:12px; flex:0 0 auto; }
+.contador-grupo{
+  min-width:38px; height:38px; padding:0 10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-family:'Inter',sans-serif; font-size:.9rem; font-weight:700;
+  color:var(--blanco); background:var(--morado); border-radius:999px;
+}
+.flecha-acordeon{
+  font-family:'Inter',sans-serif; font-size:1.4rem; color:var(--morado);
+  transition:transform .26s ease;
+}
+.cabecera-acordeon.abierta .flecha-acordeon{ transform:rotate(180deg); }
+
+.cuerpo-acordeon{
+  border:2px solid var(--lila); border-top:none;
+  border-bottom-left-radius:var(--radio); border-bottom-right-radius:var(--radio);
+  background:var(--blanco);
+  overflow:hidden;
+}
+
+.fila-socio{
+  display:flex; align-items:center; gap:14px;
+  width:100%; min-height:74px; padding:16px 20px;
+  font-family:inherit; text-align:left;
+  background:transparent; border:none; border-bottom:1px solid var(--beige-hondo);
+  cursor:pointer;
+}
+.fila-socio:last-child{ border-bottom:none; }
+.fila-socio:active{ background:var(--beige); }
+.socio-datos{ flex:1 1 auto; min-width:0; }
+.socio-nombre{
+  font-size:1.05rem; font-weight:600; color:var(--tinta);
+  overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+}
+.socio-saldo{ font-size:.85rem; color:var(--tinta-media); }
+.flecha-fila{ color:var(--lila); font-size:1.5rem; flex:0 0 auto; }
+.grupo-vacio{ padding:24px 20px; font-size:.95rem; color:var(--tinta-suave); }
+
+/* ================= LIBRETA ================= */
+.libreta-encabezado{
+  background:linear-gradient(150deg,var(--morado) 0%,var(--morado-profundo) 100%);
+  border-radius:var(--radio); padding:28px 22px; margin-bottom:18px;
+  box-shadow:var(--sombra);
+}
+.libreta-nombre{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.9rem; font-weight:700; color:var(--blanco); line-height:1.2;
+}
+.libreta-categoria{
+  display:inline-block; margin-top:10px; padding:6px 14px;
+  font-size:.8rem; font-weight:700; letter-spacing:.06em;
+  color:var(--morado-profundo); background:var(--lila); border-radius:999px;
+}
+.libreta-saldo{
+  margin-top:20px;
+  font-family:'Fraunces',Georgia,serif;
+  font-size:2.4rem; font-weight:700; color:var(--blanco);
+}
+.libreta-saldo-etiqueta{
+  font-family:'Inter',sans-serif;
+  font-size:.78rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--lila);
+}
+
+.lista-datos{ list-style:none; margin-top:12px; }
+.lista-datos li{
+  display:flex; justify-content:space-between; align-items:center; gap:14px;
+  padding:14px 0; border-bottom:1px solid var(--beige-hondo);
+  font-size:.98rem;
+}
+.lista-datos li:last-child{ border-bottom:none; }
+.dato-clave{ color:var(--tinta-media); font-weight:500; flex:0 0 auto; }
+.dato-valor{ font-weight:700; color:var(--tinta); text-align:right; }
+
+.movimiento{
+  display:flex; justify-content:space-between; align-items:center; gap:14px;
+  padding:16px 0; border-bottom:1px solid var(--beige-hondo);
+}
+.movimiento:last-child{ border-bottom:none; }
+.movimiento-fecha{ font-size:.82rem; color:var(--tinta-suave); }
+.movimiento-tipo{ font-size:1rem; font-weight:600; color:var(--tinta); }
+.movimiento-monto{ font-family:'Fraunces',Georgia,serif; font-size:1.2rem; font-weight:700; white-space:nowrap; }
+.monto-entrada{ color:var(--verde); }
+.monto-salida{ color:var(--rojo); }
+
+.credito-tarjeta{
+  padding:18px; margin-top:14px;
+  background:var(--beige); border:2px solid var(--lila-borde); border-radius:var(--radio-chico);
+}
+.vacio{ padding:20px 0; font-size:.95rem; color:var(--tinta-suave); }
+
+.envoltura-tabla{ overflow-x:auto; margin-top:14px; -webkit-overflow-scrolling:touch; }
+.tabla{ width:100%; border-collapse:collapse; font-size:.9rem; min-width:460px; }
+.tabla th{
+  padding:12px 10px; text-align:left; white-space:nowrap;
+  font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--blanco); background:var(--morado);
+}
+.tabla th:first-child{ border-top-left-radius:12px; }
+.tabla th:last-child{ border-top-right-radius:12px; }
+.tabla td{
+  padding:12px 10px; white-space:nowrap;
+  border-bottom:1px solid var(--beige-hondo); color:var(--tinta); font-weight:500;
+}
+.tabla tbody tr:nth-child(even){ background:var(--beige); }
+
+/* ================= CALENDARIO ================= */
+.navegador-calendario{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  margin-bottom:18px;
+}
+.titulo-mes{
+  flex:1 1 auto; text-align:center;
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.35rem; font-weight:700; color:var(--morado-profundo);
+}
+
+.encabezado-semana{
+  display:grid; grid-template-columns:repeat(7,1fr); gap:4px; margin-bottom:8px;
+}
+.encabezado-semana span{
+  overflow:hidden; text-overflow:clip; text-align:center;
+  font-size:.62rem; font-weight:700; letter-spacing:.02em; text-transform:uppercase;
+  color:var(--tinta-suave);
+}
+
+.rejilla-calendario{ display:grid; grid-template-columns:repeat(7,1fr); gap:4px; }
+
+.celda-dia{
+  position:relative;
+  aspect-ratio:1/1.15;
+  display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+  padding:8px 2px 4px;
+  font-family:inherit; font-size:1rem; font-weight:600; color:var(--tinta);
+  background:var(--beige);
+  border:2px solid transparent; border-radius:12px;
+  cursor:pointer;
+}
+.celda-dia.vacia{ background:transparent; border:none; cursor:default; }
+.celda-dia.hoy{ border-color:var(--morado); background:var(--lila-suave); color:var(--morado-profundo); }
+.celda-dia.con-movimientos{ background:var(--blanco); border-color:var(--lila-borde); }
+
+.burbujas-celda{
+  display:flex; gap:3px; margin-top:auto; align-items:center; justify-content:center;
+  flex-wrap:wrap; width:100%;
+}
+.burbuja-celda{
+  display:inline-flex; align-items:center; justify-content:center;
+  min-width:18px; height:18px; padding:0 4px;
+  font-size:.62rem; font-weight:700; color:var(--blanco);
+  border-radius:999px;
+}
+.burbuja-celda.credito{ background:var(--color-credito); }
+.burbuja-celda.retiro{ background:var(--color-retiro); }
+
+/* ================= HOJA DESLIZABLE ================= */
+.hoja{ position:fixed; inset:0; z-index:90; display:flex; align-items:flex-end; }
+
+/* El atributo hidden debe ganarle a display:flex.
+   Sin esta regla, la hoja nunca se cierra y atrapa al usuario. */
+.hoja[hidden]{ display:none; }
+.hoja-fondo{ position:absolute; inset:0; background:rgba(36,26,56,.55); animation:aparecer .22s ease; }
+.hoja-panel{
+  position:relative; width:100%;
+  max-height:88dvh; overflow-y:auto;
+  padding:14px 20px calc(30px + env(safe-area-inset-bottom));
+  background:var(--blanco);
+  border-radius:30px 30px 0 0;
+  box-shadow:var(--sombra-alta);
+  animation:deslizar .3s cubic-bezier(.4,0,.2,1);
+}
+@keyframes deslizar{ from{transform:translateY(100%)} to{transform:none} }
+
+.hoja-asa{
+  width:56px; height:6px; margin:0 auto 18px;
+  background:var(--lila-borde); border-radius:999px;
+}
+.hoja-titulo{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.5rem; font-weight:700; color:var(--morado-profundo); margin-bottom:18px;
+}
+
+.fila-categoria{
+  display:flex; align-items:center; justify-content:space-between; gap:14px;
+  width:100%; min-height:70px; padding:16px 20px; margin-bottom:10px;
+  font-family:inherit; font-size:1.05rem; font-weight:700; text-align:left; color:var(--tinta);
+  background:var(--beige);
+  border:2px solid var(--lila-borde); border-radius:var(--radio);
+  cursor:pointer;
+}
+.fila-categoria.abierta{
+  background:var(--lila-suave); border-color:var(--lila);
+  margin-bottom:0; border-bottom-left-radius:0; border-bottom-right-radius:0;
+}
+.categoria-nombre{ display:flex; align-items:center; gap:10px; }
+.categoria-conteo{
+  min-width:38px; height:38px; padding:0 10px;
+  display:inline-flex; align-items:center; justify-content:center;
+  font-size:.95rem; font-weight:700; color:var(--blanco);
+  background:var(--morado); border-radius:999px;
+}
+
+.panel-categoria{
+  margin-bottom:10px; padding:6px 0;
+  background:var(--blanco);
+  border:2px solid var(--lila); border-top:none;
+  border-bottom-left-radius:var(--radio); border-bottom-right-radius:var(--radio);
+}
+.solicitante{
+  display:flex; align-items:center; gap:14px;
+  width:100%; min-height:70px; padding:14px 20px;
+  font-family:inherit; text-align:left;
+  background:transparent; border:none; border-bottom:1px solid var(--beige-hondo);
+  cursor:pointer;
+}
+.solicitante:last-child{ border-bottom:none; }
+.avatar{
+  width:46px; height:46px; flex:0 0 46px;
+  display:flex; align-items:center; justify-content:center;
+  font-size:1rem; font-weight:700; color:var(--blanco);
+  background:linear-gradient(135deg,var(--lila),var(--morado));
+  border-radius:50%;
+}
+.solicitante-datos{ flex:1 1 auto; min-width:0; }
+.solicitante-nombre{ font-size:1.02rem; font-weight:600; color:var(--tinta); }
+.solicitante-detalle{ font-size:.84rem; color:var(--tinta-media); }
+.sin-solicitudes{ padding:20px; font-size:.95rem; color:var(--tinta-suave); }
+
+.hoja-panel .boton-grande{ margin-top:18px; margin-bottom:0; }
+
+/* ================= AVISO ================= */
+.aviso{
+  position:fixed; left:16px; right:16px; bottom:calc(24px + env(safe-area-inset-bottom));
+  z-index:120;
+  padding:20px 22px;
+  font-size:1rem; font-weight:600; text-align:center; color:var(--blanco);
+  background:var(--morado-profundo);
+  border-radius:var(--radio);
+  box-shadow:0 14px 34px rgba(36,26,56,.35);
+  animation:subir .26s ease;
+}
+.aviso.error{ background:var(--rojo); }
+.aviso.exito{ background:var(--verde); }
+
+/* ================= ACCESIBILIDAD ================= */
+button:focus-visible, .campo:focus-visible{
+  outline:3px solid var(--lila); outline-offset:3px;
+}
+
+@media (prefers-reduced-motion:reduce){
+  *{ animation:none !important; transition:none !important; }
+}
+
+/* Pantallas muy angostas */
+@media (max-width:360px){
+  html{ font-size:16px; }
+  .monto-gigante{ font-size:2.3rem; }
+  .rejilla-doble{ grid-template-columns:1fr; }
+}
+
+
+/* ================= NOTA DE MONEDA ================= */
+.nota-moneda{
+  margin-top:10px;
+  font-size:.76rem; font-weight:600; letter-spacing:.04em;
+  color:var(--tinta-suave);
+}
+.divisa-inicio{
+  display:inline-block; margin-top:14px; padding:6px 14px;
+  font-size:.72rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
+  color:var(--lila); background:rgba(255,255,255,.12); border-radius:999px;
+}
+
+/* ================= CAPITAL DE ARRANQUE ================= */
+.fila-fondo{ display:flex; gap:10px; align-items:stretch; margin-top:16px; }
+.fila-fondo .campo{ margin:0; flex:1 1 auto; min-height:60px; }
+.boton-fondo{
+  flex:0 0 auto; min-height:60px; padding:0 22px;
+  font-family:inherit; font-size:1rem; font-weight:700;
+  color:var(--blanco); background:var(--morado);
+  border:none; border-radius:var(--radio-chico); cursor:pointer;
+}
+
+/* ================= ESTADO VACÍO ================= */
+.estado-vacio{
+  padding:34px 24px; margin-bottom:18px; text-align:center;
+  background:var(--blanco);
+  border:2px dashed var(--lila-borde);
+  border-radius:var(--radio);
+}
+.estado-vacio-titulo{
+  font-family:'Fraunces',Georgia,serif;
+  font-size:1.25rem; font-weight:700; color:var(--morado-profundo); margin-bottom:8px;
+}
+.estado-vacio-texto{ font-size:.95rem; color:var(--tinta-media); margin-bottom:20px; }
+.estado-vacio .boton-grande{ margin:0; }
+</style>
+</head>
+<body>
+
+<!-- ====================== BARRA SUPERIOR ====================== -->
+<header class="barra-superior">
+  <button id="botonMenu" class="boton-hamburguesa" aria-label="Abrir menú de navegación" aria-expanded="false">
+    <span></span><span></span><span></span>
+  </button>
+  <h1 class="titulo-barra" id="tituloPantalla">Inicio</h1>
+</header>
+
+<!-- ====================== MENÚ DESPLEGABLE ====================== -->
+<div id="capaOscura" class="capa-oscura" hidden></div>
+
+<nav id="menuLateral" class="menu-lateral" aria-label="Navegación principal">
+  <div class="menu-encabezado">
+    <p class="menu-titulo">Caja de Ahorro</p>
+    <p class="menu-subtitulo">Administración General</p>
+  </div>
+
+  <p class="menu-etiqueta">Panel</p>
+  <button class="menu-opcion" data-pantalla="inicio">Pantalla de Inicio</button>
+
+  <p class="menu-etiqueta">Padrón</p>
+  <button class="menu-opcion" data-pantalla="directorio">Directorio de Socios</button>
+
+  <p class="menu-etiqueta">Operaciones</p>
+  <button class="menu-opcion" data-pantalla="ahorros">Depósito de Ahorro</button>
+  <button class="menu-opcion" data-pantalla="creditos">Solicitud de Crédito</button>
+  <button class="menu-opcion" data-pantalla="retiros">Retiro de Ahorro</button>
+
+  <p class="menu-etiqueta">Programación</p>
+  <button class="menu-opcion" data-pantalla="calendario">Calendario de Solicitudes</button>
+</nav>
+
+<main id="contenido">
+
+  <!-- ====================== INICIO ====================== -->
+  <section class="pantalla activa" id="pantalla-inicio">
+
+    <div class="tarjeta tarjeta-principal">
+      <p class="etiqueta-tarjeta">Dinero Disponible en la Caja</p>
+      <p class="monto-gigante" id="montoDisponible">$0.00</p>
+      <p class="nota-tarjeta">Capital líquido de la Caja de Ahorro</p>
+      <span class="divisa-inicio">Pesos Mexicanos · MXN</span>
+    </div>
+
+    <div class="rejilla-doble">
+      <div class="tarjeta tarjeta-secundaria">
+        <p class="etiqueta-tarjeta">Dinero en Créditos Activos</p>
+        <p class="monto-mediano" id="montoCreditos">$0.00</p>
+      </div>
+      <div class="tarjeta tarjeta-secundaria">
+        <p class="etiqueta-tarjeta">Ahorro Acumulado</p>
+        <p class="monto-mediano" id="montoAhorro">$0.00</p>
+      </div>
+    </div>
+
+    <!-- Capital de arranque de la Caja -->
+    <div class="tarjeta">
+      <p class="titulo-seccion">Capital de Arranque</p>
+      <p class="nota-tarjeta">
+        Dinero con el que inicia la Caja, antes de cualquier depósito.
+        Si la Caja arranca sin fondo propio, déjalo en cero.
+      </p>
+      <div class="fila-fondo">
+        <input class="campo" id="campoFondo" type="number" inputmode="decimal" min="0" step="100" placeholder="0.00">
+        <button class="boton-fondo" id="botonFondo">Guardar</button>
+      </div>
+    </div>
+
+    <div class="tarjeta">
+      <p class="titulo-seccion">Flujo del Mes Actual</p>
+      <p class="nota-tarjeta" id="notaGrafica">Comparativa de Ahorros contra Créditos</p>
+      <div class="caja-grafica">
+        <canvas id="graficaMensual"></canvas>
+      </div>
+    </div>
+
+    <!-- WIDGET DE SOLICITUDES: bloque nativo independiente -->
+    <section class="bloque-widget" aria-label="Solicitudes proyectadas">
+      <div class="widget-encabezado">
+        <p class="widget-titulo">Solicitudes Proyectadas</p>
+        <p class="widget-mes" id="widgetMes">Mes Siguiente</p>
+      </div>
+      <p class="widget-nota">Primera semana del mes siguiente</p>
+
+      <div class="tira-horizontal" id="tiraSolicitudes"></div>
+
+      <div class="widget-leyenda">
+        <span class="punto-leyenda"><i class="burbuja burbuja-credito"></i> Solicitud de Crédito</span>
+        <span class="punto-leyenda"><i class="burbuja burbuja-retiro"></i> Solicitud de Retiro</span>
+      </div>
+    </section>
+
+  </section>
+
+  <!-- ====================== DIRECTORIO ====================== -->
+  <section class="pantalla" id="pantalla-directorio">
+    <button class="boton-grande boton-primario" id="botonNuevoSocio">Registrar Socio Nuevo</button>
+
+    <div class="tarjeta tarjeta-leyenda">
+      <p class="titulo-seccion">Aportación Social</p>
+      <div class="lista-leyenda">
+        <span class="punto-leyenda"><i class="semaforo verde"></i> Pagada</span>
+        <span class="punto-leyenda"><i class="semaforo amarillo"></i> Parcialmente pagada</span>
+        <span class="punto-leyenda"><i class="semaforo rojo"></i> No pagada</span>
+      </div>
+    </div>
+
+    <div class="acordeon" id="acordeonDirectorio"></div>
+  </section>
+
+  <!-- ====================== LIBRETA ====================== -->
+  <section class="pantalla" id="pantalla-libreta">
+    <button class="boton-texto" id="botonRegresarDirectorio">Regresar al Directorio de Socios</button>
+    <div id="contenidoLibreta"></div>
+  </section>
+
+  <!-- ====================== AHORROS ====================== -->
+  <section class="pantalla" id="pantalla-ahorros">
+    <div class="estado-vacio" id="vacioAhorros" hidden>
+      <p class="estado-vacio-titulo">Todavía no hay socios</p>
+      <p class="estado-vacio-texto">
+        Registra al menos un socio en el Directorio para poder recibir depósitos de ahorro.
+      </p>
+      <button class="boton-grande boton-primario" data-ir-directorio>Ir al Directorio de Socios</button>
+    </div>
+
+    <div class="tarjeta" id="formaAhorros">
+      <p class="titulo-seccion">Depósito de Ahorro</p>
+      <p class="nota-tarjeta">Depósito mensual. Mínimo de quinientos pesos para Socios Fundadores y Socios. Mínimo de doscientos pesos para Socios Menores.</p>
+
+      <label class="etiqueta-campo" for="ahorroSocio">Socio</label>
+      <select class="campo" id="ahorroSocio"></select>
+
+      <label class="etiqueta-campo" for="ahorroMonto">Cantidad depositada</label>
+      <input class="campo" id="ahorroMonto" type="number" inputmode="decimal" min="0" step="50" placeholder="0.00">
+
+      <label class="etiqueta-campo" for="ahorroFecha">Fecha del depósito</label>
+      <input class="campo" id="ahorroFecha" type="date">
+
+      <p class="mensaje-error" id="errorAhorro" hidden></p>
+      <button class="boton-grande boton-primario" id="botonGuardarAhorro">Registrar Depósito</button>
+    </div>
+  </section>
+
+  <!-- ====================== CRÉDITOS ====================== -->
+  <section class="pantalla" id="pantalla-creditos">
+    <div class="estado-vacio" id="vacioCreditos" hidden>
+      <p class="estado-vacio-titulo">Todavía no hay socios</p>
+      <p class="estado-vacio-texto">
+        Registra al menos un socio en el Directorio para poder autorizar créditos.
+      </p>
+      <button class="boton-grande boton-primario" data-ir-directorio>Ir al Directorio de Socios</button>
+    </div>
+
+    <div id="formaCreditos">
+    <div class="tarjeta">
+      <p class="titulo-seccion">Solicitud de Crédito</p>
+      <p class="nota-tarjeta">El interés se calcula sobre saldo insoluto, es decir, sobre el capital restante de cada mes.</p>
+
+      <label class="etiqueta-campo" for="creditoSocio">Socio</label>
+      <select class="campo" id="creditoSocio"></select>
+
+      <label class="etiqueta-campo" for="creditoMonto">Cantidad solicitada</label>
+      <input class="campo" id="creditoMonto" type="number" inputmode="decimal" min="0" step="100" placeholder="0.00">
+
+      <label class="etiqueta-campo" for="creditoTasa">Interés mensual sobre saldo insoluto (porcentaje)</label>
+      <input class="campo" id="creditoTasa" type="number" inputmode="decimal" min="0" step="0.5" value="3">
+
+      <label class="etiqueta-campo" for="creditoPlazo">Plazo en meses</label>
+      <input class="campo" id="creditoPlazo" type="number" inputmode="numeric" min="1" max="36" step="1" value="6">
+
+      <label class="etiqueta-campo" for="creditoFecha">Fecha de la solicitud</label>
+      <input class="campo" id="creditoFecha" type="date">
+
+      <p class="mensaje-error" id="errorCredito" hidden></p>
+      <button class="boton-grande boton-primario" id="botonCalcularCredito">Calcular Amortización</button>
+      <button class="boton-grande boton-secundario" id="botonGuardarCredito" hidden>Autorizar y Registrar Crédito</button>
+    </div>
+
+    <div class="tarjeta" id="tarjetaTabla" hidden>
+      <p class="titulo-seccion">Tabla de Amortización</p>
+      <div class="envoltura-tabla" id="envolturaAmortizacion"></div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ====================== RETIROS ====================== -->
+  <section class="pantalla" id="pantalla-retiros">
+    <div class="estado-vacio" id="vacioRetiros" hidden>
+      <p class="estado-vacio-titulo">Todavía no hay socios</p>
+      <p class="estado-vacio-texto">
+        Registra al menos un socio en el Directorio para poder procesar retiros de ahorro.
+      </p>
+      <button class="boton-grande boton-primario" data-ir-directorio>Ir al Directorio de Socios</button>
+    </div>
+
+    <div class="tarjeta" id="formaRetiros">
+      <p class="titulo-seccion">Retiro de Ahorro</p>
+      <p class="nota-tarjeta">El retiro se descuenta del saldo de ahorro de la libreta seleccionada.</p>
+
+      <label class="etiqueta-campo" for="retiroSocio">Socio</label>
+      <select class="campo" id="retiroSocio"></select>
+
+      <p class="saldo-vivo" id="saldoRetiro">Saldo disponible: $0.00</p>
+
+      <label class="etiqueta-campo" for="retiroMonto">Cantidad a retirar</label>
+      <input class="campo" id="retiroMonto" type="number" inputmode="decimal" min="0" step="50" placeholder="0.00">
+
+      <label class="etiqueta-campo" for="retiroFecha">Fecha del retiro</label>
+      <input class="campo" id="retiroFecha" type="date">
+
+      <p class="mensaje-error" id="errorRetiro" hidden></p>
+      <button class="boton-grande boton-primario" id="botonGuardarRetiro">Procesar Retiro</button>
+    </div>
+  </section>
+
+  <!-- ====================== CALENDARIO ====================== -->
+  <section class="pantalla" id="pantalla-calendario">
+    <div class="tarjeta">
+      <div class="navegador-calendario">
+        <button class="boton-circulo" id="mesAnterior" aria-label="Mes anterior">‹</button>
+        <p class="titulo-mes" id="tituloMes">Mes</p>
+        <button class="boton-circulo" id="mesSiguiente" aria-label="Mes siguiente">›</button>
+      </div>
+
+      <div class="encabezado-semana">
+        <span>Domingo</span><span>Lunes</span><span>Martes</span><span>Miércoles</span>
+        <span>Jueves</span><span>Viernes</span><span>Sábado</span>
+      </div>
+
+      <div class="rejilla-calendario" id="rejillaCalendario"></div>
+
+      <div class="lista-leyenda leyenda-calendario">
+        <span class="punto-leyenda"><i class="burbuja burbuja-credito"></i> Solicitud de Crédito</span>
+        <span class="punto-leyenda"><i class="burbuja burbuja-retiro"></i> Solicitud de Retiro</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<!-- ====================== HOJA DEL DÍA (CALENDARIO) ====================== -->
+<div class="hoja" id="hojaDia" hidden>
+  <div class="hoja-fondo" data-cerrar-hoja></div>
+  <div class="hoja-panel" role="dialog" aria-modal="true" aria-labelledby="hojaDiaTitulo">
+    <div class="hoja-asa"></div>
+    <p class="hoja-titulo" id="hojaDiaTitulo">Día</p>
+
+    <button class="fila-categoria" id="categoriaCreditos" aria-expanded="false">
+      <span class="categoria-nombre"><i class="burbuja burbuja-credito"></i> Solicitudes de Crédito</span>
+      <span class="categoria-conteo" id="conteoCreditos">0</span>
+    </button>
+    <div class="panel-categoria" id="panelCreditos" hidden></div>
+
+    <button class="fila-categoria" id="categoriaRetiros" aria-expanded="false">
+      <span class="categoria-nombre"><i class="burbuja burbuja-retiro"></i> Solicitudes de Retiro</span>
+      <span class="categoria-conteo" id="conteoRetiros">0</span>
+    </button>
+    <div class="panel-categoria" id="panelRetiros" hidden></div>
+
+    <button class="boton-grande boton-secundario" data-cerrar-hoja>Cerrar</button>
+  </div>
+</div>
+
+<!-- ====================== HOJA DE SOCIO NUEVO ====================== -->
+<div class="hoja" id="hojaSocio" hidden>
+  <div class="hoja-fondo" data-cerrar-socio></div>
+  <div class="hoja-panel" role="dialog" aria-modal="true" aria-labelledby="hojaSocioTitulo">
+    <div class="hoja-asa"></div>
+    <p class="hoja-titulo" id="hojaSocioTitulo">Registrar Socio Nuevo</p>
+
+    <label class="etiqueta-campo" for="socioNombre">Nombre completo</label>
+    <input class="campo" id="socioNombre" type="text" placeholder="Nombre y apellidos">
+
+    <label class="etiqueta-campo" for="socioCategoria">Categoría</label>
+    <select class="campo" id="socioCategoria">
+      <option value="Socios Fundadores">Socio Fundador</option>
+      <option value="Socios">Socio</option>
+      <option value="Socios Menores">Socio Menor</option>
+    </select>
+
+    <label class="etiqueta-campo" for="socioTelefono">Teléfono</label>
+    <input class="campo" id="socioTelefono" type="tel" inputmode="tel" placeholder="10 dígitos">
+
+    <label class="etiqueta-campo" for="socioIngreso">Fecha de ingreso</label>
+    <input class="campo" id="socioIngreso" type="date">
+
+    <label class="etiqueta-campo" for="socioAportacion">Estado de la Aportación Social</label>
+    <select class="campo" id="socioAportacion">
+      <option value="pagada">Pagada</option>
+      <option value="parcial">Parcialmente pagada</option>
+      <option value="nopagada" selected>No pagada</option>
+    </select>
+
+    <p class="mensaje-error" id="errorSocio" hidden></p>
+    <button class="boton-grande boton-primario" id="botonGuardarSocio">Guardar Socio</button>
+    <button class="boton-grande boton-secundario" data-cerrar-socio>Cancelar</button>
+  </div>
+</div>
+
+<!-- ====================== AVISO FLOTANTE ====================== -->
+<div class="aviso" id="aviso" hidden></div>
+
+<!-- Librerías externas por CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+
+<script>
+/* =========================================================
+   CAJA DE AHORRO — Lógica de negocio (Vanilla JavaScript)
+   Sin frameworks. Persistencia en memoria.
+   ========================================================= */
+
+'use strict';
+
+/* ---------------------------------------------------------
+   1. CONSTANTES DE NEGOCIO
+   --------------------------------------------------------- */
+const CATEGORIAS = ['Socios Fundadores', 'Socios', 'Socios Menores'];
+
+const DEPOSITO_MINIMO = {
+  'Socios Fundadores': 500,
+  'Socios': 500,
+  'Socios Menores': 200
+};
+
+const NOMBRES_MES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio',
+                     'Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+
+const NOMBRES_DIA = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'];
+
+const APORTACION = {
+  pagada:   { clase:'verde',    texto:'Pagada' },
+  parcial:  { clase:'amarillo', texto:'Parcialmente pagada' },
+  nopagada: { clase:'rojo',     texto:'No pagada' }
+};
+
+/* ---------------------------------------------------------
+   2. UTILIDADES
+   --------------------------------------------------------- */
+const $  = (id) => document.getElementById(id);
+
+/* -------- MONEDA: PESOS MEXICANOS (MXN) --------
+   Toda cantidad de la aplicacion pasa por estas funciones.
+   No existe ninguna otra moneda en el sistema.               */
+const MONEDA = 'MXN';
+const LOCALIZACION = 'es-MX';
+
+const formatoPeso = new Intl.NumberFormat(LOCALIZACION, {
+  style: 'currency',
+  currency: MONEDA,
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2
+});
+
+/** Cantidad en pesos mexicanos. Ejemplo: 45890.5 -> "$45,890.50" */
+const dinero = (n) => formatoPeso.format(Number(n) || 0);
+
+/** Cantidad en pesos con la clave de moneda visible. -> "$45,890.50 MXN" */
+const dineroConClave = (n) => dinero(n) + ' MXN';
+
+/** Cantidad breve, sin centavos. Para ejes de grafica. -> "$45,891" */
+const dineroBreve = (n) => new Intl.NumberFormat(LOCALIZACION, {
+  style: 'currency',
+  currency: MONEDA,
+  minimumFractionDigits: 0,
+  maximumFractionDigits: 0
+}).format(Number(n) || 0);
+
+/** Clave de fecha "AAAA-MM-DD" sin desfase por zona horaria. */
+const clave = (a, m, d) =>
+  `${a}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+const claveDeCadena = (cadena) => cadena; // Los <input type="date"> ya entregan AAAA-MM-DD
+
+const fechaLegible = (c) => {
+  const [a, m, d] = c.split('-').map(Number);
+  return `${d} de ${NOMBRES_MES[m - 1]} de ${a}`;
+};
+
+/** Días del mes, correcto en años bisiestos (el día 0 del mes siguiente). */
+const diasDelMes = (a, m) => new Date(a, m + 1, 0).getDate();
+
+const iniciales = (nombre) =>
+  nombre.trim().split(/\s+/).slice(0, 2).map(p => p[0]).join('').toUpperCase();
+
+let contadorId = 1;
+const nuevoId = () => 'id-' + (contadorId++);
+
+function avisar(texto, tipo) {
+  const caja = $('aviso');
+  caja.textContent = texto;
+  caja.className = 'aviso ' + (tipo || '');
+  caja.hidden = false;
+  clearTimeout(avisar.reloj);
+  avisar.reloj = setTimeout(() => { caja.hidden = true; }, 3200);
+}
+
+function mostrarError(campo, texto) {
+  const caja = $(campo);
+  caja.textContent = texto;
+  caja.hidden = false;
+}
+const limpiarError = (campo) => { $(campo).hidden = true; };
+
+/* ---------------------------------------------------------
+   3. ESTADO
+   --------------------------------------------------------- */
+const estado = {
+  socios: [],          // { id, nombre, categoria, telefono, ingreso, aportacion }
+  depositos: [],       // { id, socioId, monto, fecha }
+  retiros: [],         // { id, socioId, monto, fecha }
+  creditos: [],        // { id, socioId, capital, tasa, plazo, fecha, tabla[], pagados }
+  // Capital con el que arranca la Caja. Se captura desde la pantalla de Inicio.
+  fondoInicial: 0,
+  mesCalendario: new Date().getMonth(),
+  anioCalendario: new Date().getFullYear(),
+  socioAbierto: null
+};
+
+/* ---------------------------------------------------------
+   4. CÁLCULOS FINANCIEROS
+   --------------------------------------------------------- */
+
+/**
+ * Amortización con interés sobre SALDO INSOLUTO.
+ * Cada mes: interés = capital restante × tasa mensual.
+ * Se abona capital fijo (capital / plazo) y el interés decrece.
+ */
+function generarAmortizacion(capital, tasaPorcentaje, plazo) {
+  const tasa = tasaPorcentaje / 100;
+  const abonoCapital = capital / plazo;
+  let insoluto = capital;
+  const tabla = [];
+
+  for (let mes = 1; mes <= plazo; mes++) {
+    const interes = insoluto * tasa;              // Sobre el capital restante
+    const pago = abonoCapital + interes;
+    const saldoFinal = mes === plazo ? 0 : insoluto - abonoCapital;
+
+    tabla.push({
+      mes,
+      saldoInicial: insoluto,
+      abonoCapital,
+      interes,
+      pago,
+      saldoFinal
+    });
+    insoluto = saldoFinal;
+  }
+  return tabla;
+}
+
+const ahorroDeSocio = (socioId) => {
+  const suma = (lista) => lista
+    .filter(m => m.socioId === socioId)
+    .reduce((t, m) => t + m.monto, 0);
+  return suma(estado.depositos) - suma(estado.retiros);
+};
+
+/** Capital vivo del crédito: lo que aún no se amortiza. */
+function saldoInsolutoDeCredito(credito) {
+  const pagadas = credito.tabla.slice(0, credito.pagados);
+  const amortizado = pagadas.reduce((t, f) => t + f.abonoCapital, 0);
+  return Math.max(0, credito.capital - amortizado);
+}
+
+const creditosActivosDeSocio = (socioId) =>
+  estado.creditos.filter(c => c.socioId === socioId && saldoInsolutoDeCredito(c) > 0.01);
+
+const totalAhorroAcumulado = () =>
+  estado.socios.reduce((t, s) => t + ahorroDeSocio(s.id), 0);
+
+const totalEnCreditos = () =>
+  estado.creditos.reduce((t, c) => t + saldoInsolutoDeCredito(c), 0);
+
+/** Efectivo en caja: fondo + ahorros captados − capital prestado que sigue afuera. */
+const dineroDisponible = () =>
+  estado.fondoInicial + totalAhorroAcumulado() - totalEnCreditos();
+
+/* ---------------------------------------------------------
+   5. SOLICITUDES POR DÍA (para calendario y widget)
+   --------------------------------------------------------- */
+function solicitudesDelDia(claveFecha) {
+  return {
+    creditos: estado.creditos.filter(c => c.fecha === claveFecha),
+    retiros:  estado.retiros.filter(r => r.fecha === claveFecha)
+  };
+}
+
+const socioPorId = (id) => estado.socios.find(s => s.id === id);
+const haySocios = () => estado.socios.length > 0;
+
+/* ---------------------------------------------------------
+   6. NAVEGACIÓN
+   --------------------------------------------------------- */
+const TITULOS = {
+  inicio:     'Inicio',
+  directorio: 'Directorio de Socios',
+  libreta:    'Libreta del Socio',
+  ahorros:    'Depósito de Ahorro',
+  creditos:   'Solicitud de Crédito',
+  retiros:    'Retiro de Ahorro',
+  calendario: 'Calendario de Solicitudes'
+};
+
+function abrirMenu(abrir) {
+  $('menuLateral').classList.toggle('abierto', abrir);
+  $('botonMenu').classList.toggle('abierto', abrir);
+  $('botonMenu').setAttribute('aria-expanded', String(abrir));
+  $('capaOscura').hidden = !abrir;
+  document.body.style.overflow = abrir ? 'hidden' : '';
+}
+
+function irA(pantalla) {
+  document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
+  $('pantalla-' + pantalla).classList.add('activa');
+  $('tituloPantalla').textContent = TITULOS[pantalla];
+
+  document.querySelectorAll('.menu-opcion').forEach(b =>
+    b.classList.toggle('seleccionado', b.dataset.pantalla === pantalla)
+  );
+
+  abrirMenu(false);
+  window.scrollTo({ top: 0, behavior: 'instant' });
+
+  if (pantalla === 'inicio')      { pintarResumen(); pintarGrafica(); pintarWidget(); }
+  if (pantalla === 'directorio')  pintarDirectorio();
+  if (pantalla === 'calendario')  pintarCalendario();
+  if (['ahorros','creditos','retiros'].includes(pantalla)) {
+    llenarSelectores();
+    alternarEstadoVacio(pantalla);
+  }
+}
+
+/**
+ * Con el padrón vacío no tiene sentido mostrar un formulario de operación:
+ * no hay a quién elegir. Se muestra una invitación a registrar socios.
+ */
+function alternarEstadoVacio(pantalla) {
+  const mapa = {
+    ahorros:  ['vacioAhorros',  'formaAhorros'],
+    creditos: ['vacioCreditos', 'formaCreditos'],
+    retiros:  ['vacioRetiros',  'formaRetiros']
+  };
+  const [idVacio, idForma] = mapa[pantalla];
+  const vacio = !haySocios();
+  $(idVacio).hidden = !vacio;
+  $(idForma).hidden = vacio;
+}
+
+/* ---------------------------------------------------------
+   7. PANTALLA DE INICIO
+   --------------------------------------------------------- */
+function pintarResumen() {
+  $('montoDisponible').textContent = dineroConClave(dineroDisponible());
+  $('montoCreditos').textContent   = dinero(totalEnCreditos());
+  $('montoAhorro').textContent     = dinero(totalAhorroAcumulado());
+  $('campoFondo').value = estado.fondoInicial ? estado.fondoInicial : '';
+}
+
+function guardarFondo() {
+  const texto = $('campoFondo').value.trim();
+  const valor = parseFloat(texto);
+
+  if (texto === '') {
+    estado.fondoInicial = 0;
+  } else if (isNaN(valor) || valor < 0) {
+    return avisar('Escribe una cantidad válida para el capital de arranque.', 'error');
+  } else {
+    estado.fondoInicial = valor;
+  }
+
+  pintarResumen();
+  pintarGrafica();
+  avisar(`Capital de arranque fijado en ${dineroConClave(estado.fondoInicial)}.`, 'exito');
+}
+
+let grafica = null;
+function pintarGrafica() {
+  const hoy = new Date();
+  const a = hoy.getFullYear();
+  const m = hoy.getMonth();
+  const dias = diasDelMes(a, m);
+
+  const ahorrosPorSemana  = [0, 0, 0, 0, 0];
+  const creditosPorSemana = [0, 0, 0, 0, 0];
+
+  const acumular = (lista, destino) => lista.forEach(mov => {
+    const [ma, mm, md] = mov.fecha.split('-').map(Number);
+    if (ma === a && mm - 1 === m) {
+      const semana = Math.min(4, Math.floor((md - 1) / 7));
+      destino[semana] += (mov.monto !== undefined ? mov.monto : mov.capital);
+    }
+  });
+
+  acumular(estado.depositos, ahorrosPorSemana);
+  acumular(estado.creditos, creditosPorSemana);
+
+  const etiquetas = ['Semana 1', 'Semana 2', 'Semana 3', 'Semana 4', 'Semana 5'];
+  const usadas = dias > 28 ? 5 : 4;
+
+  $('notaGrafica').textContent =
+    `Ahorros contra Créditos durante ${NOMBRES_MES[m]} de ${a}`;
+
+  if (grafica) grafica.destroy();
+
+  grafica = new Chart($('graficaMensual'), {
+    type: 'bar',
+    data: {
+      labels: etiquetas.slice(0, usadas),
+      datasets: [
+        {
+          label: 'Ahorros',
+          data: ahorrosPorSemana.slice(0, usadas),
+          backgroundColor: '#7C4DDB',
+          borderRadius: 8,
+          maxBarThickness: 34
+        },
+        {
+          label: 'Créditos',
+          data: creditosPorSemana.slice(0, usadas),
+          backgroundColor: '#D97A2B',
+          borderRadius: 8,
+          maxBarThickness: 34
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            usePointStyle: true, pointStyle: 'circle',
+            padding: 18, font: { family: 'Inter', size: 13, weight: '600' },
+            color: '#6B6280'
+          }
+        },
+        tooltip: {
+          callbacks: { label: (c) => `${c.dataset.label}: ${dinero(c.parsed.y)}` },
+          bodyFont: { family: 'Inter', size: 13 },
+          padding: 12
+        }
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { font: { family: 'Inter', size: 11, weight: '600' }, color: '#948CA8' }
+        },
+        y: {
+          beginAtZero: true,
+          // Con la Caja vacía todo vale cero: se fija un techo para que el eje se dibuje bien.
+          suggestedMax: 1000,
+          grid: { color: '#EFE8DC' },
+          ticks: {
+            font: { family: 'Inter', size: 11 }, color: '#948CA8',
+            callback: (v) => dineroBreve(v)
+          }
+        }
+      }
+    }
+  });
+}
+
+/* ---------------------------------------------------------
+   8. WIDGET DE SOLICITUDES — PRIMERA SEMANA DEL MES SIGUIENTE
+   --------------------------------------------------------- */
+function pintarWidget() {
+  const hoy = new Date();
+
+  // Mes siguiente, con salto correcto de año (diciembre → enero).
+  let mes  = hoy.getMonth() + 1;
+  let anio = hoy.getFullYear();
+  if (mes > 11) { mes = 0; anio += 1; }
+
+  $('widgetMes').textContent = `${NOMBRES_MES[mes]} ${anio}`;
+
+  const tira = $('tiraSolicitudes');
+  tira.innerHTML = '';
+
+  const tope = Math.min(7, diasDelMes(anio, mes)); // Solo los primeros 7 días
+
+  for (let dia = 1; dia <= tope; dia++) {
+    const c = clave(anio, mes, dia);
+    const { creditos, retiros } = solicitudesDelDia(c);
+    const hay = creditos.length + retiros.length > 0;
+
+    const tarjeta = document.createElement('button');
+    tarjeta.className = 'dia-tira' + (hay ? ' con-movimientos' : '');
+    tarjeta.type = 'button';
+
+    const diaSemana = new Date(anio, mes, dia).getDay();
+
+    const burbujas = [];
+    if (creditos.length) burbujas.push(`<span class="burbuja-conteo credito">${creditos.length}</span>`);
+    if (retiros.length)  burbujas.push(`<span class="burbuja-conteo retiro">${retiros.length}</span>`);
+    if (!burbujas.length) burbujas.push('<span class="sin-movimientos">Sin datos</span>');
+
+    tarjeta.innerHTML = `
+      <span class="nombre-dia">${NOMBRES_DIA[diaSemana].slice(0, 3)}</span>
+      <span class="numero-dia">${dia}</span>
+      <span class="burbujas-tira">${burbujas.join('')}</span>
+    `;
+
+    tarjeta.addEventListener('click', () => {
+      estado.anioCalendario = anio;
+      estado.mesCalendario = mes;
+      abrirHojaDia(anio, mes, dia);
+    });
+
+    tira.appendChild(tarjeta);
+  }
+}
+
+/* ---------------------------------------------------------
+   9. DIRECTORIO DE SOCIOS
+   --------------------------------------------------------- */
+function pintarDirectorio() {
+  const raiz = $('acordeonDirectorio');
+  raiz.innerHTML = '';
+
+  CATEGORIAS.forEach(categoria => {
+    const grupo = estado.socios
+      .filter(s => s.categoria === categoria)
+      .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+
+    const contenedor = document.createElement('div');
+    contenedor.className = 'grupo-acordeon';
+
+    const cabecera = document.createElement('button');
+    cabecera.className = 'cabecera-acordeon';         // Cerrado por defecto
+    cabecera.type = 'button';
+    cabecera.setAttribute('aria-expanded', 'false');
+    cabecera.innerHTML = `
+      <span>${categoria}</span>
+      <span class="grupo-derecha">
+        <span class="contador-grupo">${grupo.length}</span>
+        <span class="flecha-acordeon">⌄</span>
+      </span>
+    `;
+
+    const cuerpo = document.createElement('div');
+    cuerpo.className = 'cuerpo-acordeon';
+    cuerpo.hidden = true;
+
+    if (!grupo.length) {
+      cuerpo.innerHTML = '<p class="grupo-vacio">Todavía no hay socios en esta categoría.</p>';
+    } else {
+      grupo.forEach(socio => {
+        const fila = document.createElement('button');
+        fila.className = 'fila-socio';
+        fila.type = 'button';
+        const estadoAp = APORTACION[socio.aportacion];
+        fila.innerHTML = `
+          <i class="semaforo ${estadoAp.clase}" title="Aportación Social: ${estadoAp.texto}"></i>
+          <span class="socio-datos">
+            <span class="socio-nombre">${socio.nombre}</span>
+            <span class="socio-saldo">Ahorro: ${dinero(ahorroDeSocio(socio.id))}</span>
+          </span>
+          <span class="flecha-fila">›</span>
+        `;
+        fila.addEventListener('click', () => abrirLibreta(socio.id));
+        cuerpo.appendChild(fila);
+      });
+    }
+
+    cabecera.addEventListener('click', () => {
+      const abierto = cabecera.classList.toggle('abierta');
+      cabecera.setAttribute('aria-expanded', String(abierto));
+      cuerpo.hidden = !abierto;
+    });
+
+    contenedor.appendChild(cabecera);
+    contenedor.appendChild(cuerpo);
+    raiz.appendChild(contenedor);
+  });
+}
+
+/* ---------------------------------------------------------
+   10. LIBRETA DEL SOCIO
+   --------------------------------------------------------- */
+function abrirLibreta(socioId) {
+  estado.socioAbierto = socioId;
+  const socio = socioPorId(socioId);
+  const saldo = ahorroDeSocio(socioId);
+  const estadoAp = APORTACION[socio.aportacion];
+
+  const movimientos = [
+    ...estado.depositos.filter(d => d.socioId === socioId)
+      .map(d => ({ ...d, tipo: 'Depósito de Ahorro', signo: 1 })),
+    ...estado.retiros.filter(r => r.socioId === socioId)
+      .map(r => ({ ...r, tipo: 'Retiro de Ahorro', signo: -1 }))
+  ].sort((a, b) => b.fecha.localeCompare(a.fecha));
+
+  const activos = creditosActivosDeSocio(socioId);
+
+  const htmlMovimientos = movimientos.length
+    ? movimientos.map(m => `
+        <div class="movimiento">
+          <span>
+            <span class="movimiento-tipo">${m.tipo}</span><br>
+            <span class="movimiento-fecha">${fechaLegible(m.fecha)}</span>
+          </span>
+          <span class="movimiento-monto ${m.signo > 0 ? 'monto-entrada' : 'monto-salida'}">
+            ${m.signo > 0 ? '+' : '−'} ${dinero(m.monto)}
+          </span>
+        </div>`).join('')
+    : '<p class="vacio">Sin movimientos registrados.</p>';
+
+  const htmlCreditos = activos.length
+    ? activos.map(c => {
+        const insoluto = saldoInsolutoDeCredito(c);
+        const pendientes = c.tabla.slice(c.pagados);
+        return `
+          <div class="credito-tarjeta">
+            <ul class="lista-datos">
+              <li><span class="dato-clave">Capital original</span><span class="dato-valor">${dinero(c.capital)}</span></li>
+              <li><span class="dato-clave">Saldo insoluto</span><span class="dato-valor">${dinero(insoluto)}</span></li>
+              <li><span class="dato-clave">Interés mensual sobre saldo insoluto</span><span class="dato-valor">${c.tasa} por ciento</span></li>
+              <li><span class="dato-clave">Mensualidades cubiertas</span><span class="dato-valor">${c.pagados} de ${c.plazo}</span></li>
+              <li><span class="dato-clave">Fecha de la solicitud</span><span class="dato-valor">${fechaLegible(c.fecha)}</span></li>
+            </ul>
+            <div class="envoltura-tabla">
+              ${tablaHTML(pendientes)}
+            </div>
+          </div>`;
+      }).join('')
+    : '<p class="vacio">Sin créditos activos.</p>';
+
+  $('contenidoLibreta').innerHTML = `
+    <div class="libreta-encabezado">
+      <p class="libreta-nombre">${socio.nombre}</p>
+      <span class="libreta-categoria">${socio.categoria}</span>
+      <p class="libreta-saldo-etiqueta" style="margin-top:20px">Saldo Actual de Ahorros</p>
+      <p class="libreta-saldo">${dineroConClave(saldo)}</p>
+    </div>
+
+    <div class="tarjeta">
+      <p class="titulo-seccion">Datos Personales</p>
+      <ul class="lista-datos">
+        <li><span class="dato-clave">Nombre completo</span><span class="dato-valor">${socio.nombre}</span></li>
+        <li><span class="dato-clave">Categoría</span><span class="dato-valor">${socio.categoria}</span></li>
+        <li><span class="dato-clave">Teléfono</span><span class="dato-valor">${socio.telefono || 'No registrado'}</span></li>
+        <li><span class="dato-clave">Fecha de ingreso</span><span class="dato-valor">${fechaLegible(socio.ingreso)}</span></li>
+        <li>
+          <span class="dato-clave">Aportación Social</span>
+          <span class="dato-valor">
+            <i class="semaforo ${estadoAp.clase}"></i> ${estadoAp.texto}
+          </span>
+        </li>
+        <li><span class="dato-clave">Depósito mensual mínimo</span><span class="dato-valor">${dinero(DEPOSITO_MINIMO[socio.categoria])}</span></li>
+      </ul>
+    </div>
+
+    <div class="tarjeta">
+      <p class="titulo-seccion">Historial de Depósitos y Retiros</p>
+      ${htmlMovimientos}
+    </div>
+
+    <div class="tarjeta">
+      <p class="titulo-seccion">Créditos Activos y Amortizaciones</p>
+      ${htmlCreditos}
+    </div>
+
+    <button class="boton-grande boton-primario" id="botonExportarPDF">Descargar Libreta en formato PDF</button>
+  `;
+
+  $('botonExportarPDF').addEventListener('click', () => exportarPDF(socioId));
+  irA('libreta');
+}
+
+function tablaHTML(filas) {
+  if (!filas.length) return '<p class="vacio">Crédito liquidado.</p>';
+  return `
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Mes</th><th>Saldo inicial</th><th>Abono a capital</th>
+          <th>Interés</th><th>Pago total</th><th>Saldo final</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${filas.map(f => `
+          <tr>
+            <td>${f.mes}</td>
+            <td>${dinero(f.saldoInicial)}</td>
+            <td>${dinero(f.abonoCapital)}</td>
+            <td>${dinero(f.interes)}</td>
+            <td>${dinero(f.pago)}</td>
+            <td>${dinero(f.saldoFinal)}</td>
+          </tr>`).join('')}
+      </tbody>
+    </table>
+    <p class="nota-moneda">Cantidades expresadas en Pesos Mexicanos (MXN).</p>`;
+}
+
+/* ---------------------------------------------------------
+   11. EXPORTACIÓN A PDF (jsPDF)
+   --------------------------------------------------------- */
+function exportarPDF(socioId) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: 'pt', format: 'letter' });
+
+  const socio = socioPorId(socioId);
+  const saldo = ahorroDeSocio(socioId);
+  const activos = creditosActivosDeSocio(socioId);
+  const margen = 48;
+  let y = 0;
+
+  // Encabezado morado
+  doc.setFillColor(91, 33, 182);
+  doc.rect(0, 0, doc.internal.pageSize.getWidth(), 118, 'F');
+
+  doc.setTextColor(255, 255, 255);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(20);
+  doc.text('Libreta del Socio', margen, 50);
+
+  doc.setFontSize(13);
+  doc.setFont('helvetica', 'normal');
+  doc.text(socio.nombre, margen, 74);
+
+  doc.setFontSize(10);
+  doc.text(socio.categoria, margen, 94);
+
+  doc.setFontSize(9);
+  doc.text('Caja de Ahorro', doc.internal.pageSize.getWidth() - margen, 50, { align: 'right' });
+  doc.text('Emitida el ' + fechaLegible(clave(
+    new Date().getFullYear(), new Date().getMonth(), new Date().getDate()
+  )), doc.internal.pageSize.getWidth() - margen, 68, { align: 'right' });
+
+  y = 150;
+
+  // Saldo destacado
+  doc.setTextColor(59, 30, 110);
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(11);
+  doc.text('SALDO ACTUAL DE AHORROS EN PESOS MEXICANOS', margen, y);
+  doc.setFontSize(24);
+  doc.text(dineroConClave(saldo), margen, y + 28);
+  y += 56;
+
+  // Datos personales
+  doc.autoTable({
+    startY: y,
+    head: [['Datos Personales', '']],
+    body: [
+      ['Nombre completo', socio.nombre],
+      ['Categoría', socio.categoria],
+      ['Teléfono', socio.telefono || 'No registrado'],
+      ['Fecha de ingreso', fechaLegible(socio.ingreso)],
+      ['Aportación Social', APORTACION[socio.aportacion].texto],
+      ['Depósito mensual mínimo', dinero(DEPOSITO_MINIMO[socio.categoria])]
+    ],
+    theme: 'grid',
+    margin: { left: margen, right: margen },
+    headStyles: { fillColor: [91, 33, 182], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+    bodyStyles: { fontSize: 10, textColor: [36, 26, 56] },
+    alternateRowStyles: { fillColor: [247, 243, 236] }
+  });
+  y = doc.lastAutoTable.finalY + 26;
+
+  // Historial de movimientos
+  const movimientos = [
+    ...estado.depositos.filter(d => d.socioId === socioId)
+      .map(d => ({ ...d, tipo: 'Depósito de Ahorro', signo: 1 })),
+    ...estado.retiros.filter(r => r.socioId === socioId)
+      .map(r => ({ ...r, tipo: 'Retiro de Ahorro', signo: -1 }))
+  ].sort((a, b) => a.fecha.localeCompare(b.fecha));
+
+  doc.autoTable({
+    startY: y,
+    head: [['Fecha', 'Concepto', 'Cantidad en Pesos Mexicanos']],
+    body: movimientos.length
+      ? movimientos.map(m => [
+          fechaLegible(m.fecha),
+          m.tipo,
+          (m.signo > 0 ? '+ ' : '- ') + dinero(m.monto)
+        ])
+      : [['—', 'Sin movimientos registrados', '—']],
+    theme: 'grid',
+    margin: { left: margen, right: margen },
+    headStyles: { fillColor: [91, 33, 182], textColor: 255, fontStyle: 'bold', fontSize: 10 },
+    bodyStyles: { fontSize: 10, textColor: [36, 26, 56] },
+    alternateRowStyles: { fillColor: [247, 243, 236] }
+  });
+  y = doc.lastAutoTable.finalY + 26;
+
+  // Créditos activos
+  if (activos.length) {
+    activos.forEach(c => {
+      if (y > 620) { doc.addPage(); y = 60; }
+
+      doc.setFont('helvetica', 'bold');
+      doc.setFontSize(12);
+      doc.setTextColor(59, 30, 110);
+      doc.text(
+        `Crédito solicitado el ${fechaLegible(c.fecha)} — Saldo insoluto ${dinero(saldoInsolutoDeCredito(c))}`,
+        margen, y
+      );
+
+      doc.autoTable({
+        startY: y + 12,
+        head: [['Mes', 'Saldo inicial', 'Abono a capital', 'Interés', 'Pago total', 'Saldo final']],
+        // Todas las columnas monetarias van en Pesos Mexicanos
+        body: c.tabla.map(f => [
+          f.mes, dinero(f.saldoInicial), dinero(f.abonoCapital),
+          dinero(f.interes), dinero(f.pago), dinero(f.saldoFinal)
+        ]),
+        theme: 'grid',
+        margin: { left: margen, right: margen },
+        headStyles: { fillColor: [109, 40, 217], textColor: 255, fontStyle: 'bold', fontSize: 9 },
+        bodyStyles: { fontSize: 9, textColor: [36, 26, 56] },
+        alternateRowStyles: { fillColor: [247, 243, 236] }
+      });
+      y = doc.lastAutoTable.finalY + 26;
+    });
+  } else {
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(59, 30, 110);
+    doc.text('Créditos Activos', margen, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(107, 98, 128);
+    doc.text('Sin créditos activos.', margen, y + 20);
+  }
+
+  // Pie de página
+  const total = doc.internal.getNumberOfPages();
+  for (let p = 1; p <= total; p++) {
+    doc.setPage(p);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(8);
+    doc.setTextColor(148, 140, 168);
+    doc.text(
+      `Caja de Ahorro — Todas las cantidades en Pesos Mexicanos (MXN). Página ${p} de ${total}.`,
+      doc.internal.pageSize.getWidth() / 2,
+      doc.internal.pageSize.getHeight() - 28,
+      { align: 'center' }
+    );
+  }
+
+  doc.save(`Libreta - ${socio.nombre}.pdf`);
+  avisar('Libreta descargada en formato PDF.', 'exito');
+}
+
+/* ---------------------------------------------------------
+   12. SELECTORES DE SOCIO
+   --------------------------------------------------------- */
+function llenarSelectores() {
+  const ordenados = [...estado.socios].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+  ['ahorroSocio', 'creditoSocio', 'retiroSocio'].forEach(id => {
+    const sel = $(id);
+    const previo = sel.value;
+    sel.innerHTML = ordenados
+      .map(s => `<option value="${s.id}">${s.nombre} — ${s.categoria}</option>`)
+      .join('');
+    if (previo && ordenados.some(s => s.id === previo)) sel.value = previo;
+  });
+  actualizarSaldoRetiro();
+}
+
+const hoyISO = () => {
+  const h = new Date();
+  return clave(h.getFullYear(), h.getMonth(), h.getDate());
+};
+
+/* ---------------------------------------------------------
+   13. OPERACIÓN: AHORROS
+   --------------------------------------------------------- */
+function guardarAhorro() {
+  limpiarError('errorAhorro');
+
+  if (!haySocios())
+    return mostrarError('errorAhorro', 'Registra al menos un socio antes de recibir depósitos.');
+
+  const socioId = $('ahorroSocio').value;
+  const monto = parseFloat($('ahorroMonto').value);
+  const fecha = $('ahorroFecha').value;
+
+  if (!socioId) return mostrarError('errorAhorro', 'Selecciona un socio.');
+  if (!fecha)   return mostrarError('errorAhorro', 'Indica la fecha del depósito.');
+  if (isNaN(monto) || monto <= 0)
+    return mostrarError('errorAhorro', 'Escribe una cantidad válida.');
+
+  const socio = socioPorId(socioId);
+  const minimo = DEPOSITO_MINIMO[socio.categoria];
+
+  // VALIDACIÓN ESTRICTA DEL DEPÓSITO MÍNIMO
+  if (monto < minimo) {
+    return mostrarError(
+      'errorAhorro',
+      `El depósito no se puede registrar. La categoría ${socio.categoria} exige un mínimo de ${dinero(minimo)} y estás capturando ${dinero(monto)}.`
+    );
+  }
+
+  estado.depositos.push({ id: nuevoId(), socioId, monto, fecha: claveDeCadena(fecha) });
+
+  $('ahorroMonto').value = '';
+  avisar(`Depósito de ${dinero(monto)} registrado a nombre de ${socio.nombre}.`, 'exito');
+  pintarResumen();
+}
+
+/* ---------------------------------------------------------
+   14. OPERACIÓN: CRÉDITOS
+   --------------------------------------------------------- */
+let creditoPropuesto = null;
+
+function calcularCredito() {
+  limpiarError('errorCredito');
+
+  if (!haySocios())
+    return mostrarError('errorCredito', 'Registra al menos un socio antes de autorizar créditos.');
+
+  const socioId = $('creditoSocio').value;
+  const capital = parseFloat($('creditoMonto').value);
+  const tasa    = parseFloat($('creditoTasa').value);
+  const plazo   = parseInt($('creditoPlazo').value, 10);
+  const fecha   = $('creditoFecha').value;
+
+  if (!socioId) return mostrarError('errorCredito', 'Selecciona un socio.');
+  if (!fecha)   return mostrarError('errorCredito', 'Indica la fecha de la solicitud.');
+  if (isNaN(capital) || capital <= 0)
+    return mostrarError('errorCredito', 'Escribe una cantidad válida para el crédito.');
+  if (isNaN(tasa) || tasa < 0)
+    return mostrarError('errorCredito', 'Escribe un interés mensual válido.');
+  if (isNaN(plazo) || plazo < 1)
+    return mostrarError('errorCredito', 'El plazo debe ser de al menos un mes.');
+  const disponible = dineroDisponible();
+  if (disponible <= 0) {
+    return mostrarError('errorCredito',
+      'La Caja no tiene dinero disponible. Captura el capital de arranque en la pantalla de Inicio, o registra depósitos de ahorro, antes de prestar.');
+  }
+  if (capital > disponible) {
+    return mostrarError('errorCredito',
+      `La Caja solo dispone de ${dineroConClave(disponible)}. Reduce la cantidad solicitada.`);
+  }
+
+  const tabla = generarAmortizacion(capital, tasa, plazo);
+  creditoPropuesto = { socioId, capital, tasa, plazo, fecha: claveDeCadena(fecha), tabla };
+
+  $('envolturaAmortizacion').innerHTML = tablaHTML(tabla);
+  $('tarjetaTabla').hidden = false;
+  $('botonGuardarCredito').hidden = false;
+
+  const interesTotal = tabla.reduce((t, f) => t + f.interes, 0);
+  avisar(`Interés total sobre saldo insoluto: ${dinero(interesTotal)}.`);
+}
+
+function guardarCredito() {
+  if (!creditoPropuesto) return;
+
+  // El dinero disponible pudo cambiar entre el cálculo y la autorización.
+  if (creditoPropuesto.capital > dineroDisponible()) {
+    return mostrarError('errorCredito',
+      `La Caja ya solo dispone de ${dineroConClave(dineroDisponible())}. Vuelve a calcular la amortización.`);
+  }
+
+  const socio = socioPorId(creditoPropuesto.socioId);
+
+  estado.creditos.push({ id: nuevoId(), pagados: 0, ...creditoPropuesto });
+
+  avisar(`Crédito de ${dinero(creditoPropuesto.capital)} autorizado a ${socio.nombre}.`, 'exito');
+
+  creditoPropuesto = null;
+  $('creditoMonto').value = '';
+  $('tarjetaTabla').hidden = true;
+  $('botonGuardarCredito').hidden = true;
+  pintarResumen();
+}
+
+/* ---------------------------------------------------------
+   15. OPERACIÓN: RETIROS
+   --------------------------------------------------------- */
+function actualizarSaldoRetiro() {
+  const socioId = $('retiroSocio').value;
+  const saldo = socioId ? ahorroDeSocio(socioId) : 0;
+  $('saldoRetiro').textContent = 'Saldo disponible: ' + dinero(saldo);
+}
+
+function guardarRetiro() {
+  limpiarError('errorRetiro');
+
+  if (!haySocios())
+    return mostrarError('errorRetiro', 'Registra al menos un socio antes de procesar retiros.');
+
+  const socioId = $('retiroSocio').value;
+  const monto = parseFloat($('retiroMonto').value);
+  const fecha = $('retiroFecha').value;
+
+  if (!socioId) return mostrarError('errorRetiro', 'Selecciona un socio.');
+  if (!fecha)   return mostrarError('errorRetiro', 'Indica la fecha del retiro.');
+  if (isNaN(monto) || monto <= 0)
+    return mostrarError('errorRetiro', 'Escribe una cantidad válida.');
+
+  const socio = socioPorId(socioId);
+  const saldo = ahorroDeSocio(socioId);
+
+  if (saldo <= 0) {
+    return mostrarError('errorRetiro',
+      `${socio.nombre} no tiene ahorro acumulado. No hay nada que retirar.`);
+  }
+  if (monto > saldo) {
+    return mostrarError('errorRetiro',
+      `El retiro excede el saldo de la libreta. ${socio.nombre} tiene ${dineroConClave(saldo)} disponibles.`);
+  }
+
+  estado.retiros.push({ id: nuevoId(), socioId, monto, fecha: claveDeCadena(fecha) });
+
+  $('retiroMonto').value = '';
+  actualizarSaldoRetiro();
+  avisar(`Retiro de ${dinero(monto)} procesado a ${socio.nombre}.`, 'exito');
+  pintarResumen();
+}
+
+/* ---------------------------------------------------------
+   16. CALENDARIO MULTIANUAL
+   --------------------------------------------------------- */
+function pintarCalendario() {
+  const a = estado.anioCalendario;
+  const m = estado.mesCalendario;
+
+  $('tituloMes').textContent = `${NOMBRES_MES[m]} de ${a}`;
+
+  const rejilla = $('rejillaCalendario');
+  rejilla.innerHTML = '';
+
+  const primerDia = new Date(a, m, 1).getDay();  // 0 = Domingo
+  const dias = diasDelMes(a, m);                 // Correcto en años bisiestos
+
+  // Celdas vacías previas
+  for (let i = 0; i < primerDia; i++) {
+    const hueco = document.createElement('div');
+    hueco.className = 'celda-dia vacia';
+    rejilla.appendChild(hueco);
+  }
+
+  const hoy = new Date();
+
+  for (let dia = 1; dia <= dias; dia++) {
+    const c = clave(a, m, dia);
+    const { creditos, retiros } = solicitudesDelDia(c);
+    const hay = creditos.length + retiros.length > 0;
+
+    const esHoy = hoy.getFullYear() === a && hoy.getMonth() === m && hoy.getDate() === dia;
+
+    const celda = document.createElement('button');
+    celda.type = 'button';
+    celda.className = 'celda-dia' + (hay ? ' con-movimientos' : '') + (esHoy ? ' hoy' : '');
+
+    const burbujas = [];
+    if (creditos.length) burbujas.push(`<span class="burbuja-celda credito">${creditos.length}</span>`);
+    if (retiros.length)  burbujas.push(`<span class="burbuja-celda retiro">${retiros.length}</span>`);
+
+    celda.innerHTML = `
+      <span>${dia}</span>
+      <span class="burbujas-celda">${burbujas.join('')}</span>
+    `;
+
+    celda.addEventListener('click', () => abrirHojaDia(a, m, dia));
+    rejilla.appendChild(celda);
+  }
+}
+
+function moverMes(paso) {
+  let m = estado.mesCalendario + paso;
+  let a = estado.anioCalendario;
+  if (m < 0)  { m = 11; a -= 1; }
+  if (m > 11) { m = 0;  a += 1; }
+  estado.mesCalendario = m;
+  estado.anioCalendario = a;
+  pintarCalendario();
+}
+
+/* ---------------------------------------------------------
+   17. HOJA DEL DÍA
+   --------------------------------------------------------- */
+function abrirHojaDia(a, m, dia) {
+  const c = clave(a, m, dia);
+  const { creditos, retiros } = solicitudesDelDia(c);
+  const diaSemana = new Date(a, m, dia).getDay();
+
+  $('hojaDiaTitulo').textContent = `${NOMBRES_DIA[diaSemana]}, ${fechaLegible(c)}`;
+  $('conteoCreditos').textContent = creditos.length;
+  $('conteoRetiros').textContent  = retiros.length;
+
+  const listaHTML = (solicitudes, tipo) => {
+    if (!solicitudes.length) {
+      return `<p class="sin-solicitudes">No hay ${tipo} programadas para este día.</p>`;
+    }
+    return solicitudes.map(s => {
+      const socio = socioPorId(s.socioId);
+      const cantidad = s.capital !== undefined ? s.capital : s.monto;
+      return `
+        <button class="solicitante" type="button" data-socio="${socio.id}">
+          <span class="avatar">${iniciales(socio.nombre)}</span>
+          <span class="solicitante-datos">
+            <span class="solicitante-nombre">${socio.nombre}</span>
+            <span class="solicitante-detalle">${socio.categoria} · ${dinero(cantidad)}</span>
+          </span>
+          <span class="flecha-fila">›</span>
+        </button>`;
+    }).join('');
+  };
+
+  $('panelCreditos').innerHTML = listaHTML(creditos, 'solicitudes de crédito');
+  $('panelRetiros').innerHTML  = listaHTML(retiros, 'solicitudes de retiro');
+
+  // Ambos paneles cerrados al abrir la hoja
+  cerrarCategorias();
+
+  // Al tocar un solicitante, se abre su Libreta
+  document.querySelectorAll('#hojaDia .solicitante').forEach(b => {
+    b.addEventListener('click', () => {
+      cerrarHojaDia();
+      abrirLibreta(b.dataset.socio);
+    });
+  });
+
+  $('hojaDia').hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarCategorias() {
+  ['Creditos', 'Retiros'].forEach(k => {
+    $('categoria' + k).classList.remove('abierta');
+    $('categoria' + k).setAttribute('aria-expanded', 'false');
+    $('panel' + k).hidden = true;
+  });
+}
+
+function alternarCategoria(k) {
+  const boton = $('categoria' + k);
+  const panel = $('panel' + k);
+  const abierto = boton.classList.toggle('abierta');
+  boton.setAttribute('aria-expanded', String(abierto));
+  panel.hidden = !abierto;
+}
+
+function cerrarHojaDia() {
+  $('hojaDia').hidden = true;
+  document.body.style.overflow = '';
+}
+
+/* ---------------------------------------------------------
+   18. HOJA DE SOCIO NUEVO
+   --------------------------------------------------------- */
+function abrirHojaSocio() {
+  limpiarError('errorSocio');
+  $('socioNombre').value = '';
+  $('socioTelefono').value = '';
+  $('socioIngreso').value = hoyISO();
+  $('socioCategoria').value = 'Socios';
+  $('socioAportacion').value = 'nopagada';
+  $('hojaSocio').hidden = false;
+  document.body.style.overflow = 'hidden';
+}
+
+function cerrarHojaSocio() {
+  $('hojaSocio').hidden = true;
+  document.body.style.overflow = '';
+}
+
+function guardarSocio() {
+  limpiarError('errorSocio');
+
+  const nombre = $('socioNombre').value.trim();
+  const categoria = $('socioCategoria').value;
+  const telefono = $('socioTelefono').value.trim();
+  const ingreso = $('socioIngreso').value;
+  const aportacion = $('socioAportacion').value;
+
+  if (nombre.length < 3)
+    return mostrarError('errorSocio', 'Escribe el nombre completo del socio.');
+  if (!ingreso)
+    return mostrarError('errorSocio', 'Indica la fecha de ingreso.');
+  if (estado.socios.length >= 90)
+    return mostrarError('errorSocio', 'El padrón llegó al límite de noventa socios.');
+  if (estado.socios.some(s => s.nombre.toLowerCase() === nombre.toLowerCase()))
+    return mostrarError('errorSocio', 'Ya existe un socio registrado con ese nombre.');
+
+  estado.socios.push({ id: nuevoId(), nombre, categoria, telefono, ingreso, aportacion });
+
+  cerrarHojaSocio();
+  pintarDirectorio();
+  llenarSelectores();
+  ['ahorros', 'creditos', 'retiros'].forEach(alternarEstadoVacio);
+  avisar(`${nombre} se agregó al padrón como ${categoria}.`, 'exito');
+}
+
+/* ---------------------------------------------------------
+   19. ARRANQUE
+   --------------------------------------------------------- */
+function iniciar() {
+  // Navegación
+  $('botonMenu').addEventListener('click', () =>
+    abrirMenu(!$('menuLateral').classList.contains('abierto'))
+  );
+  $('capaOscura').addEventListener('click', () => abrirMenu(false));
+  document.querySelectorAll('.menu-opcion').forEach(b =>
+    b.addEventListener('click', () => irA(b.dataset.pantalla))
+  );
+
+  // Atajos desde los estados vacíos hacia el Directorio
+  document.querySelectorAll('[data-ir-directorio]').forEach(b =>
+    b.addEventListener('click', () => irA('directorio'))
+  );
+
+  // Capital de arranque
+  $('botonFondo').addEventListener('click', guardarFondo);
+
+  // Directorio y libreta
+  $('botonNuevoSocio').addEventListener('click', abrirHojaSocio);
+  $('botonRegresarDirectorio').addEventListener('click', () => irA('directorio'));
+
+  // Hoja de socio nuevo
+  $('botonGuardarSocio').addEventListener('click', guardarSocio);
+  document.querySelectorAll('[data-cerrar-socio]').forEach(b =>
+    b.addEventListener('click', cerrarHojaSocio)
+  );
+
+  // Operaciones
+  $('botonGuardarAhorro').addEventListener('click', guardarAhorro);
+  $('botonCalcularCredito').addEventListener('click', calcularCredito);
+  $('botonGuardarCredito').addEventListener('click', guardarCredito);
+  $('botonGuardarRetiro').addEventListener('click', guardarRetiro);
+  $('retiroSocio').addEventListener('change', actualizarSaldoRetiro);
+
+  // Calendario
+  $('mesAnterior').addEventListener('click', () => moverMes(-1));
+  $('mesSiguiente').addEventListener('click', () => moverMes(1));
+
+  // Hoja del día
+  $('categoriaCreditos').addEventListener('click', () => alternarCategoria('Creditos'));
+  $('categoriaRetiros').addEventListener('click', () => alternarCategoria('Retiros'));
+  document.querySelectorAll('[data-cerrar-hoja]').forEach(b =>
+    b.addEventListener('click', cerrarHojaDia)
+  );
+
+  // Escape cierra cualquier capa abierta
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Escape') return;
+    if (!$('hojaDia').hidden)   cerrarHojaDia();
+    else if (!$('hojaSocio').hidden) cerrarHojaSocio();
+    else abrirMenu(false);
+  });
+
+  // Fechas por defecto
+  ['ahorroFecha', 'creditoFecha', 'retiroFecha'].forEach(id => { $(id).value = hoyISO(); });
+
+  llenarSelectores();
+  irA('inicio');
+}
+
+document.addEventListener('DOMContentLoaded', iniciar);
+</script>
+</body>
+</html>
